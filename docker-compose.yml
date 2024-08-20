@@ -1,0 +1,13 @@
+services:
+    app:
+        container_name: correos-app
+        image: correos:dev
+        build:
+            context: .
+            dockerfile: Dockerfile
+            target: build-development
+        restart: unless-stopped
+        tty: true
+        volumes:
+            - ./src:/code
+            - ./coverage:/coverage
