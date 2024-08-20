@@ -342,8 +342,7 @@ Only the latest major version receives security fixes.
 
 ### Reporting a Vulnerability
 
-If you discover a security vulnerability within this project, please [open an issue here](./issues). All security vulnerabilities will be promptly addressed.
-
+If you discover a security vulnerability within this project, please [open an issue here](https://github.com/AlcidesRC/scraping-correos-with-php/issues). All security vulnerabilities will be promptly addressed.
 
 
 ------
