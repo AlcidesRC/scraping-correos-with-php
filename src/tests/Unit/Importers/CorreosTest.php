@@ -8,7 +8,6 @@ use App\CsvHandler;
 use App\Importers\Correos;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -70,7 +69,6 @@ final class CorreosTest extends TestCase
     }
 
     #[Test]
-    #[Group('small')]
     public function checkExceptionIsRaisedWithWrongProvince(): void
     {
         $this->expectException(RuntimeException::class);
@@ -81,7 +79,6 @@ final class CorreosTest extends TestCase
 
     #[Test]
     #[DataProvider('dataProviderForScrapeProvince')]
-    #[Group('large')]
     public function scrapeProvince(int $provinceId, int $expectedSize): void
     {
         $data = self::processProvince($provinceId);
@@ -95,7 +92,6 @@ final class CorreosTest extends TestCase
      */
     #[Test]
     #[DataProvider('dataProviderForValidateFirstPostalCode')]
-    #[Group('small')]
     public function validateFirstPostalCodeFromSpecificProvinces(int $provinceId, array $expectedFirstRow): void
     {
         $data = self::processProvince($provinceId);
