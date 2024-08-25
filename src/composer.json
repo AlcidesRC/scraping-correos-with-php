@@ -1,4 +1,7 @@
 {
+    "type": "project",
+    "keywords": ["php", "strict types", "clean code", "best practices"],
+    "license": "MIT",
     "authors": [
         {
             "name": "Alcides Ramos",
@@ -16,16 +19,8 @@
             "Tests\\Unit\\": "tests/Unit"
         }
     },
-    "config": {
-        "optimize-autoloader": true,
-        "preferred-install": "dist",
-        "sort-packages": true,
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true,
-            "infection/extension-installer": true
-        }
-    },
     "require": {
+        "php": "^8.3",
         "guzzlehttp/guzzle": "^7.9"
     },
     "require-dev": {
@@ -37,30 +32,22 @@
         "squizlabs/php_codesniffer": "^3.9",
         "symfony/var-dumper": "^7.0"
     },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "infection/extension-installer": true
+        }
+    },
     "scripts": {
-        "linter": "vendor/bin/parallel-lint --colors -e php -j 10",
-        "phpcs": "vendor/bin/phpcs -p --colors --standard=phpcs.xml",
-        "phpcbf": "vendor/bin/phpcbf -p --colors --standard=phpcs.xml",
-        "phpstan": "vendor/bin/phpstan analyse --ansi --memory-limit=1G --no-progress --configuration=phpstan.neon",
-        "phpunit": "php -d xdebug.mode=off vendor/bin/phpunit --configuration=phpunit.xml --testdox --colors --order-by=random --random-order-seed=$(head -200 /dev/urandom | cksum | cut -f1 -d \" \")",
-
-        "tests": [
-            "@linter app/ tests/",
-            "@phpcs",
-            "@phpunit --coverage-text"
-        ],
-        "tests-unit": [
-            "@linter app/ tests/",
-            "@phpcs",
-            "@phpunit --testsuite=Unit --coverage-text"
-        ],
-
-        "coverage": [
-            "rm -Rf /coverage/*",
-            "@linter app/ tests/",
-            "@phpcs",
-            "@phpunit --coverage-text --coverage-html=/coverage"
-        ]
+        "check-syntax": "parallel-lint --colors -e php -j 10 app/ tests/",
+        "check-style": "phpcs -p --colors --standard=phpcs.xml app/ tests/",
+        "fix-style": "phpcbf -p --colors --standard=phpcs.xml app/ tests/",
+        "phpstan": "phpstan analyse --ansi --memory-limit=1G --configuration=phpstan.neon",
+        "phpmd": "phpmd app/,tests/ ansi cleancode,codesize,controversial,design,naming,unusedcode",
+        "tests": "phpunit --configuration phpunit.xml --coverage-text --colors --testdox --order-by=random --random-order-seed=$(head -200 /dev/urandom | cksum | cut -f1 -d \" \")"
     },
     "minimum-stability": "stable",
     "prefer-stable": true

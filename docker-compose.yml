@@ -10,4 +10,4 @@ services:
         tty: true
         volumes:
             - ./src:/code
-            - ./coverage:/coverage
+            - ./output:/output

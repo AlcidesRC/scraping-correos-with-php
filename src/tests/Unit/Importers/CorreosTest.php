@@ -8,6 +8,7 @@ use App\CsvHandler;
 use App\Importers\Correos;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -17,7 +18,7 @@ use SlopeIt\ClockMock\ClockMock;
 #[CoversClass(CsvHandler::class)]
 final class CorreosTest extends TestCase
 {
-    private const PATH_OUTPUT = '/code/output/';
+    private const PATH_OUTPUT = '/output/';
     private const CSV_HEADERS = ['Country', 'Postal Code', 'City', 'Province', 'Region', 'Latitude', 'Longitude'];
 
     protected function setUp(): void
@@ -34,13 +35,21 @@ final class CorreosTest extends TestCase
     {
         $files = glob(strtr('{PATH}/province-*.csv', ['{PATH}' => self::PATH_OUTPUT]));
 
+        if ($files === false) {
+            return;
+        }
+
         array_walk($files, fn(string $filename) => unlink($filename));
     }
 
+    /**
+     * @return array<int, string>
+     * @throws \Throwable
+     */
     private static function processProvince(int $provinceId): array
     {
         $filename = strtr('{PATH}/province-{PROVINCE}.csv', [
-            '{PATH}' => self::PATH_OUTPUT,
+            '{PATH}' => rtrim(self::PATH_OUTPUT, '/'),
             '{PROVINCE}' => str_pad((string) $provinceId, 2, '0', STR_PAD_LEFT),
         ]);
 
@@ -61,6 +70,7 @@ final class CorreosTest extends TestCase
     }
 
     #[Test]
+    #[Group('small')]
     public function checkExceptionIsRaisedWithWrongProvince(): void
     {
         $this->expectException(RuntimeException::class);
@@ -71,6 +81,7 @@ final class CorreosTest extends TestCase
 
     #[Test]
     #[DataProvider('dataProviderForScrapeProvince')]
+    #[Group('large')]
     public function scrapeProvince(int $provinceId, int $expectedSize): void
     {
         $data = self::processProvince($provinceId);
@@ -79,8 +90,12 @@ final class CorreosTest extends TestCase
         self::assertCount($expectedSize, $data);
     }
 
+    /**
+     * @param array<int, float|string> $expectedFirstRow
+     */
     #[Test]
     #[DataProvider('dataProviderForValidateFirstPostalCode')]
+    #[Group('small')]
     public function validateFirstPostalCodeFromSpecificProvinces(int $provinceId, array $expectedFirstRow): void
     {
         $data = self::processProvince($provinceId);
@@ -90,7 +105,7 @@ final class CorreosTest extends TestCase
     }
 
     /**
-     * @return array<string, array<int, string>>
+     * @return array<string, array<int, int>>
      */
     public static function dataProviderForScrapeProvince(): array
     {
@@ -153,7 +168,7 @@ final class CorreosTest extends TestCase
     }
 
     /**
-     * @return array<string, array<int, string>>
+     * @return array<string, array<int, array<int, float|string>|int>>
      */
     public static function dataProviderForValidateFirstPostalCode(): array
     {
